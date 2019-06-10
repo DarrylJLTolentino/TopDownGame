@@ -9,12 +9,18 @@ public class PlayerController : MonoBehaviour
     private Rigidbody rb;
     private Vector3 moveVelocity;
     private Camera mainCamera;
+    private GameObject trapPrefab;
+    private GameObject player;
+    private GameObject plane;
     // Start is called before the first frame update
     void Start()
     {
         //Need to get Rigidbody of player and find the main camera within Unity
         rb = GetComponent<Rigidbody>();
         mainCamera = FindObjectOfType<Camera>();
+        player = GameObject.FindWithTag("Player");
+        trapPrefab = GameObject.FindWithTag("Trap");
+        plane = GameObject.FindWithTag("Ground");
     }
 
     // Update is called once per frame
@@ -36,9 +42,22 @@ public class PlayerController : MonoBehaviour
 
             transform.LookAt(new Vector3(pointToLook.x, transform.position.y, pointToLook.z));
         }
+
+        if (Input.GetKeyDown("space"))
+        {
+            DropTrap();
+        }
     }
 
     void FixedUpdate() {
         rb.velocity = moveVelocity;
+    }
+
+    private void DropTrap()
+    {
+        if (trapPrefab) {
+            trapPrefab.transform.rotation = Quaternion.Euler(0, 0, 0);
+            Instantiate(trapPrefab, new Vector3(Mathf.RoundToInt(player.transform.position.x), plane.transform.position.y, Mathf.RoundToInt(player.transform.position.z)), trapPrefab.transform.rotation);
+        }
     }
 }
